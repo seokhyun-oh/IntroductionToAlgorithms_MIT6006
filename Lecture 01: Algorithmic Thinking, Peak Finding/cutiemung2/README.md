@@ -163,20 +163,21 @@ n개의 행(row)과 m개의 열(col)을 가지는 배열이 있다고 하자.
 
 - - - - - - - -
 
-![real3](https://user-images.githubusercontent.com/35156601/35720164-e251a834-082f-11e8-9c55-31910e35ca43.JPG)
+![real1](https://user-images.githubusercontent.com/35156601/35720165-e28d8534-082f-11e8-96fe-9d8fe2f4ad63.JPG)
 
 먼저, 기존 방식대로 열의 정 중앙을 잡는다.
 열을 하나의 1차원 배열로 생각하고 가장 큰 값을 찾는다. Peak을 찾는것이아니라 최댓값을 찾는다.
 
 <br />
 
-![real1](https://user-images.githubusercontent.com/35156601/35720165-e28d8534-082f-11e8-96fe-9d8fe2f4ad63.JPG)
+![real2](https://user-images.githubusercontent.com/35156601/35720167-e2bc215a-082f-11e8-8601-8a49ae8395e4.JPG)
 
 최댓값과 양옆을 비교하여 더 큰 값이 있다면 해당 방향으로 탐색 열을 이동시킨다.
 
 <br />
 
-![real2](https://user-images.githubusercontent.com/35156601/35720167-e2bc215a-082f-11e8-8601-8a49ae8395e4.JPG)
+![real3](https://user-images.githubusercontent.com/35156601/35720164-e251a834-082f-11e8-9c55-31910e35ca43.JPG)
+
 
 이동 된 열에서 또 다시 최댓값을 찾고 양옆과 비교하는 작업을 반복한다. (사실 한쪽만 비교해도 상관없다)
 양 옆의 값이 모두 자신보다 크지 않을 경우 Peak으로 선택한다.
