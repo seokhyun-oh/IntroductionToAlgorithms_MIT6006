@@ -25,10 +25,10 @@ class MaxHeapSort:
 
 
     def heap_sort(self, S):
-        length = len(S)
-        self.build_max_heap(S) # O(n)
-        sorted_S = [self.__extract_max(S) for _ in range(length-1)] # extract_max( O(logn) ) 를 n번 수행 : O(nlogn)
-        S = sorted_S
+        sorted_S = [None] + S
+        length = len(sorted_S)
+        self.build_max_heap(sorted_S) # O(n)
+        S = [self.__extract_max(sorted_S) for _ in range(length-1)] # extract_max( O(logn) ) 를 n번 수행 : O(nlogn)
         return S
 
     
