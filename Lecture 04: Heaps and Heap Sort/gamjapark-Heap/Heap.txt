@@ -1,0 +1,101 @@
+//Heap.h
+#pragma once
+#include <iostream>
+using namespace std;
+
+typedef int type;
+
+class Heap {
+public:
+	Heap() : capacity(150), size(0) {
+		heap = new type[capacity];
+	}
+	~Heap() {
+		delete[] heap;
+	}
+
+	void build_max_heap();
+
+	void max_heapify(const int CurPos);
+
+	void insert(type new_heap);
+
+	type extract_max();
+
+	type * heap_sort();
+
+private:
+	int capacity;
+	int size;
+	type *heap;
+
+	void swap(type * const a, type * const b) {
+		type temp = *a;
+		*a = *b;
+		*b = temp;
+	}
+};
+
+//Heap.cpp
+#include <iostream>
+#include "Heap.h"
+using namespace std;
+
+void Heap :: build_max_heap() {
+	for (int i = (size / 2) - 1; i < 0; i--)
+		max_heapify(i);
+}
+void Heap :: max_heapify(const int CurPos){
+	const int LeftPos = (CurPos + 1) * 2 - 1, RightPos = (CurPos + 1) * 2;
+	int largest;
+
+	if (size == 0) {
+		perror("Empty Heap");
+		exit(1);
+	}
+
+	if (LeftPos < size - 1 && heap[LeftPos] > heap[CurPos])
+		largest = LeftPos;
+	else largest = CurPos;
+
+	
+	if ( RightPos < size - 1 && heap[RightPos] > heap[largest])
+		largest = RightPos;
+
+	if (largest != CurPos) {
+		swap(&heap[largest], &heap[CurPos]);
+		max_heapify(largest);
+	}
+}
+void Heap :: insert(type new_heap) {
+	if (size >= capacity) {
+		perror("Full Heap");
+		exit(1);
+	}
+	heap[size] = new_heap;
+	size++;
+}
+type Heap :: extract_max() { 
+	if (size == 0) {
+		perror("Empty Heap");
+		exit(1);
+	}
+
+	type max = heap[0];
+	heap[0] = heap[size - 1];
+	heap[size - 1] = NULL;
+	size--;
+
+	max_heapify(0);
+	return max;
+}
+
+type * Heap :: heap_sort() {
+	build_max_heap();
+	
+	type * sort_heap;
+	for (int i = 0; i < size; i++) sort_heap[i] = extract_max();
+
+	return sort_heap;
+}
+
