@@ -1,0 +1,121 @@
+#include <iostream>
+using namespace std;
+
+template<class type>
+class BSTnode {
+public:
+	BSTnode(const type& init_data = type(), BSTnode *init_left = NULL, BSTnode *init_right = NULL){
+		data = init_data;
+		left = init_left;
+		right = init_right;
+	}
+	type & data() { return data; }
+	const type& data() const { return data; }
+	BSTnode *& Left() { return left; }
+	BSTnode *& Right() { return Right; }
+	const BSTnode *& Left() const { return left; }
+	const BSTnode *& Right() const { return Right; }
+	void set_data(const type* new_data) { data = new_data; }
+	void set_left(BSTnode* new_left) { left = new_left; }
+	void set_right(BSTnode* new_right) { right = new_right; }
+	bool is_leaf() const{ return (left == NULL && right == NULL); }
+	void tree_clear(BSTnode<type>*& root) {
+		if (root != NULL) {
+			tree_clear(root->Left());
+			tree_clear(root->Right());
+			delete root;
+			root = NULL;
+		}
+	}
+	BSTnode<type>* tree_copy(BSTnode<type>* root) {
+		if (root == NULL) return NULL;
+		else return new BSTnode<type>(root->data(), tree_copy(root->Left()), tree_copy(root->Right()));
+	}
+private:
+	BSTnode *left;
+	BSTnode *right;
+	type data;
+};
+
+template<class type>
+class BST {
+public:		
+	BST() {																//constructor
+		root = NULL;
+	}
+	BST(const BST & new_BST) {											//copy constructor
+		if (this == new_BST) return this;
+		tree_clear(this.root);
+		this.root = tree_copy(new_BST.root);
+	}
+	~BST() { tree_clear(this.root); }									//destructor
+	size_t Size(BSTnode<type>*& Nroot) {								//tree size
+		if (i_BST.root->is_leaf()) return 1;
+		else return 1 + Size(Nroot->Left()) + Size(Nroot->Right());
+	}
+	BST& operator=(const BST& new_BST) {								//Assignment Operator
+		if (this == new_BST) return this;
+		tree_clear(this.root);
+		this.root = tree_copy(new_BST.root);
+		return this;
+	}
+	void insert(const type& entry) {											//insert entry
+		BSTnode<type>* new_ptr = new BSTnode<type>(entry, NULL, NULL);
+		if (root == NULL) root = new_ptr;
+		while (1) {
+			if (entry <= root->data()) {
+				if (root->Left() == NULL) {
+					root->set_left(new_ptr);
+					break;
+				}
+				else root = root->left();
+			}
+			else {
+				if (root->Right() == NULL) {
+					root->set_right(new_ptr);
+					break;
+				}
+				else root = root->Right();
+			}
+		}
+	}
+	void insert_all(const BSTnode<type>* N_root) {								//insert all
+		if (N_root != NULL) {
+			insert(N_root->data());
+			insert_all(N_root->Left());
+			insert_all(N_root->Right());
+		}
+	}
+	void bst_remove_max(BSTnode<type>*& r_root, type& r_entry) {				//largest data remove
+		if (r_root->Right() == NULL) {
+			BSTnode<type>* old_ptr = r_root;
+			r_root = r_root->Left();
+			delete old_ptr;
+		}
+		else bst_remove_max(r_root->Right(), r_entry);
+	}
+	void bst_remove(BSTnode<type>*& r_root, const type& target) {				//target remove
+		if (r_root == NULL) return;
+		if (target < r_root->data()) bst_remove(r_root->Left(), target);
+		else if(target > r_root->data()) bst_remove(r_root->Right(), target);	
+		else {
+			if (r_root->Left() == NULL) {
+				BSTnode<type>* old_ptr = r_root;
+				r_root = root_ptr->Right();
+				delete old_ptr;
+			}
+			else bst_remove_max(r_root->Left(), r_root->data());
+		}
+	}
+	void operator +=(const BST<type>& add_BST) {
+		if (this == &add_BST) {
+			BSTnode<type>* add_ptr = tree_copy(add_BST.root);
+			insert_all(add_ptr);
+			tree_clear(add_ptr);
+		}
+		else inset_all(add_BST.root);
+	}
+	
+private:
+	BSTnode<type>* root;
+};
