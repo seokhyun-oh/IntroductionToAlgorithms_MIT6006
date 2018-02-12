@@ -1,0 +1,85 @@
+//AVL rotation, insert
+#include <iostream>
+using namespace std;
+typedef int type;
+class AVL {
+	struct Node {
+		type data;
+		Node *left;
+		Node *right;
+		int height;
+	};
+public:
+	AVL() {
+		node = NULL;
+	}
+	~AVL(){
+		if (this == NULL) return;
+
+	}
+	void insert(const type & entry) {
+		node = insert(node, entry);
+	}
+	Node * insert(Node * node_ptr, const type & entry) {
+		if (node_ptr == NULL) {
+			node_ptr = new Node;
+			node_ptr->data = entry;
+			node_ptr->left = NULL;
+			node_ptr->height = 0;
+			return node_ptr;
+		}
+		else if( entry > node_ptr->data ){
+			node_ptr->right = insert(node_ptr->right, entry);
+			int bal = balanceCheck(node_ptr);
+			if (bal < -1 && entry > node_ptr->right->data)
+				node_ptr = L_rotation(node_ptr);
+			else if (bal < -1 && entry < node_ptr->right->data)
+				node_ptr = LL_rotation(node_ptr);
+		}
+		else if (entry < node_ptr->data) {
+			node_ptr->left = insert(node_ptr->left, entry);
+			int bal = balanceCheck(node_ptr);
+			if(bal > 1 && entry < node_ptr->left->data)
+				node_ptr = R_rotation(node_ptr);
+			else if (bal > 1 && entry > node_ptr->left->data)
+				node_ptr = RR_rotation(node_ptr);
+		}
+
+		node_ptr->height = height(node_ptr->left) > height(node_ptr->right) ? height(node_ptr->left) + 1 : height(node_ptr->right) + 1;
+		return node_ptr;
+	}
+	Node * L_rotation(Node *& node_ptr) {
+		Node * temp = node_ptr->right;
+		node_ptr->right = temp->left;
+		temp->left = node_ptr;
+		node_ptr->height = (height(node_ptr->left) > height(node_ptr->right) ? height(node_ptr->left) + 1 : height(node_ptr->right) + 1);
+		temp->height = (height(temp->left) > node_ptr->height ? height(temp->left) + 1 : node_ptr->height + 1);
+		return temp;
+	}
+	Node * R_rotation(Node *& node_ptr) {
+		Node * temp = node_ptr->left;
+		node_ptr->left = temp->right;
+		temp->right = node_ptr;
+		node_ptr->height = (height(node_ptr->left) > height(node_ptr->right) ? height(node_ptr->left) + 1 : height(node_ptr->right) + 1);
+		temp->height = (height(temp->left) > node_ptr->height ? height(temp->left) + 1 : node_ptr->height + 1);
+		return temp;
+	}
+	Node * LL_rotation(Node *& node_ptr) {
+		node_ptr->right = R_rotation(node_ptr->right);
+		return L_rotation(node_ptr);
+	}
+	Node * RR_rotation(Node *& node_ptr) {
+		node_ptr->left = L_rotation(node_ptr->left);
+		return R_rotation(node_ptr);
+	}
+
+
+private:
+	Node * node;
+	int height(Node * node_ptr) {
+		return (node_ptr == NULL ? -1 : node_ptr->height);
+	}
+	int balanceCheck(Node * node_ptr) {
+		return (node_ptr == NULL ? 0 : height(node_ptr->left) - height(node_ptr->right));
+	}
+};
