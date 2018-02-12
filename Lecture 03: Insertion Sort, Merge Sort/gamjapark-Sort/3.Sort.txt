@@ -1,0 +1,110 @@
+//Insertion Sort
+typedef int type;
+void InsertionSort(type  A[], int len){
+
+	int j;
+	if( len == 0 ) return;
+	for(int i = 1; i < len; i++){
+		type x = A[i];
+		j = i;
+		while(j > 0 && x < A[j - 1]){
+			A[j] = A[j - 1];
+			j--;
+		}
+		A[j] = x;
+	}
+} 
+
+
+//Binary Insertion Sort
+typedef int type;
+int BinarySearch(type A [] ,int start, int end, type x){
+
+	int mid = (start + end) / 2;
+	if(start == end) return start;
+	else{
+		if( x < A[mid]) return BinarySearch(A, start, mid - 1, x);
+		else if( x > A[mid] )return BinarySearch(A, mid + 1, end, x);
+		else return A[mid];
+	}
+}
+
+void BinaryInsertionSort(type A [], int len){
+
+	int t;
+	for(int i = 1; i < len; i++ ){
+		t = BinarySearch(A, 0, i, A[i]);
+		if( t < i ){
+			type x = A[i];
+			j = i;
+			while(j > 0 && x < A[j - 1]){
+				A[j] = A[j - 1];
+				j--;
+			}
+			A[j] = x;
+		}
+	}
+}
+
+//Merge Sort
+typedef int type;
+void Arraycopy(type l[], type r[], const int lstart, const int lend, const int rstart, const int rend) {
+	int j = rstart;
+	for (int i = lstart; i < lend || j < rend; i++, j++)
+		l[i] = r[j];
+}
+void merge(type A [], type L [], type R [], int l, int r) {
+	int i = 0, j = 0, k = 0;
+	while (i <= l &&  j < r) {
+		if (L[i] < R[j]) {
+			A[k] = L[i];
+			i++;
+		}
+		else {
+			A[k] = R[j];
+			j++;
+		}
+		k++;
+	}
+
+	if (i > l) Arraycopy(A, R, k, l + r, j, r);
+	else Arraycopy(A, L, k, l + r, i, l)
+}
+void MergeSort(type A [], int len) {
+	if (len == 1) return;
+	if (len > 1) {
+		const int l = len / 2, r = len - l;
+		type L = (type *)malloc(sizeof(type)*l);
+		type R = (type *)malloc(sizeof(type)*r);
+
+		Arraycopy(L, A, 0, l, 0, l);
+		Arraycopy(R, A, 0, r, l, len);
+
+		MergeSort(L, l);
+		MergeSort(R, r);
+
+		merge(A, L, R, l, r);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
