@@ -2,33 +2,6 @@ import math
 import random
 
 
-class String:
-
-    def __init__(self, text=''):
-        self.text = text
-        self.hashcode = None
-
-    def __hash__(self):
-        if self.hashcode is None:
-            self.hashcode = self.__hashcode__()
-        return self.hashcode
-
-    def __str__(self):
-        return self.text
-
-    def __hashcode__(self):
-        """
-        pre-hash function
-        hashcode = s[0]*(31^(n-1)) + s[1]*(31^(n-2)) ... s[n-1])
-        """
-        hashcode = 0
-        digit = math.pow(31, len(self.text)-1)
-        for c in self.text:
-            hashcode = hashcode + int(ord(c)*digit)
-            digit = digit // 31
-        return hashcode
-
-
 def div():
     """
     Division 방식은 렌덤값 m으로 키값을 나눈 나머지를 이용한다.
