@@ -1,10 +1,3 @@
-"""
-Table resizing
-- hash functions (div, mul, univ)
-
-Rolling hash
-Karp-Rabin algorithm (String match)
-"""
 import math
 import random
 
@@ -52,6 +45,16 @@ class Div:
     def __call__(self, key):
         return key % self.m
 
+    def grow(self):
+        self.size = self.size * 2
+        self.m = get_prime_exceed(self.size)
+        return self.m
+
+    def shrink(self):
+        self.size = self.size // 2
+        self.m = get_prime_exceed(self.size)
+        return self.m
+
     def get_size(self):
         return self.m
 
@@ -73,6 +76,16 @@ class Mul:
     def __call__(self, key):
         return (self.a*key % self.m) >> (self.w-self.r)
 
+    def grow(self):
+        self.size = self.size * 2
+        self.r = math.floor(math.log(self.size, 2))
+        return int(math.pow(2, self.r))
+
+    def shrink(self):
+        self.size = self.size // 2
+        self.r = math.floor(math.log(self.size, 2))
+        return int(math.pow(2, self.r))
+
     def get_size(self):
         return int(math.pow(2, self.r))
 
@@ -92,6 +105,16 @@ class Univ:
     def __call__(self, key):
         return ((self.a*key + self.b) % self.p) % self.m
 
+    def grow(self):
+        self.size = self.size * 2
+        self.__setup__()
+        return self.m
+
+    def shrink(self):
+        self.size = self.size // 2
+        self.__setup__()
+        return self.m
+
     def get_size(self):
         return self.m
 
@@ -105,11 +128,42 @@ class Hash:
         self.size = 0
 
     def insert(self, item):
+        self.__insert(item)
+        self.size = self.size + 1
+        # slot에 비해 저장된 데이터가 많아질 경우 리스트의 선형탐색시간이 늘어나게된다
+        # 이를 피하기위해 slot당 평균 1개의 데이터가 저장될 경우 테이블 크기를 증가시키고 탐색시간을 줄인다.
+        if self.size > self.capacity:
+            self.capacity = self.h.grow()
+            self.__copy_items()
+
+    def __insert(self, item):
         key = self.h(item.__hash__())
         if self.items[key] is None:
             self.items[key] = [item]
         else:
             self.items[key].append(item)
+
+    def delete(self, item):
+        key = self.h(item.__hash__())
+        if self.items[key] is not None:
+            self.items[key].remove(item)
+            self.size = self.size - 1
+            # slot에 비해 적은양의 데이터가 저장된 경우 메모리를 비효율적으로 사용하는것이다.
+            # 따라서 일정 이하로 저장된 데이터가 줄어들 경우 테이블 크기를 줄여서 메모리를 확보한다.
+            if self.capacity >= self.size * 4:
+                self.capacity = self.h.shrink()
+                self.__copy_items()
+
+    def __copy_items(self):
+        old = self.items
+        self.items = [None] * self.capacity
+        for o in old:
+            if o is None:
+                continue
+            for entry in o:
+                self.__insert(entry)
+            del o
+        del old
 
     def show_table(self):
         for i in range(self.capacity):
@@ -139,6 +193,10 @@ def main():
             hash.insert(word)
         hash.show_table()
         print('-'*100)
+        for word in data:
+            hash.delete(word)
+        hash.show_table()
+        print('*'*100)
 
 
 if __name__ == "__main__":
